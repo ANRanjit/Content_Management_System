@@ -3,6 +3,7 @@ package com.example.cms.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,9 +33,6 @@ public class UserController {
 		super();
 		this.userService = userService;
 	}
-
-
-
 	@Operation(description = "Insert User",responses = {
 			@ApiResponse(responseCode = "200",description = "Inserted Successfully"),
 			@ApiResponse(responseCode = "400",description = "Invalid Inputs",content = {
@@ -49,4 +47,11 @@ public class UserController {
 	public String test() {
 		return "Hello from cms";
 	}
+	
+	@GetMapping("/user/{userId}")
+	public ResponseEntity<ResponseStructure<UserResponse>> findUser(@PathVariable int userId)
+	{
+		return userService.findUser(userId);
+	}
+	
 }
