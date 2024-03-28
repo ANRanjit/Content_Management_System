@@ -36,9 +36,6 @@ public class UserController {
 		super();
 		this.userService = userService;
 	}
-
-
-
 	@Operation(description = "Insert User",responses = {
 			@ApiResponse(responseCode = "200",description = "Inserted Successfully"),
 			@ApiResponse(responseCode = "400",description = "Invalid Inputs",content = {
@@ -51,7 +48,11 @@ public class UserController {
 	}
 	@GetMapping("/test")
 	public String test() {
-		return "Hello from cms";
+		return "Hello f
+	@GetMapping("/user/{userId}")
+	public ResponseEntity<ResponseStructure<UserResponse>> findUser(@PathVariable int userId)
+	{
+		return userService.findUser(userId);
 	}
 	
 	@DeleteMapping("/user/{userId}")

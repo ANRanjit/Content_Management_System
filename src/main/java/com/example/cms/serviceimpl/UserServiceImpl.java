@@ -51,6 +51,12 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
+	public ResponseEntity<ResponseStructure<UserResponse>> findUser(int userId) {
+		return userRepository.findById(userId).map(user->ResponseEntity.ok(
+				responseStructure.setStatusCode(HttpStatus.OK.value())
+				.setMessage("User Found").setData(mapToUserResponse(user))))
+				.orElseThrow(()-> new UserNotFoundException("user not found"));
+	}
 	public ResponseEntity<ResponseStructure<UserResponse>> deleteByUserId(int userId) {
 		return userRepository.findById(userId).map(user ->{
 			user.setDeleted(true);
