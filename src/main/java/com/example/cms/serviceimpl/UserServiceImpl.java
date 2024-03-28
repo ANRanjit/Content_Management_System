@@ -57,7 +57,17 @@ public class UserServiceImpl implements UserService{
 				.setMessage("User Found").setData(mapToUserResponse(user))))
 				.orElseThrow(()-> new UserNotFoundException("user not found"));
 	}
-	
-	
+	public ResponseEntity<ResponseStructure<UserResponse>> deleteByUserId(int userId) {
+		return userRepository.findById(userId).map(user ->{
+			user.setDeleted(true);
+			User uniqueuser = userRepository.save(user);
+			return ResponseEntity.ok(
+				responseStructure.setStatusCode(HttpStatus.OK.value())
+				.setMessage("User Found and will be deleted in 30 days")
+				.setData(mapToUserResponse(uniqueuser)));
+		})
+				.orElseThrow(()-> new UserNotFoundException("User does not exist"));
+		
+	}
 	
 }
