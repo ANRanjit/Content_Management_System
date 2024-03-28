@@ -98,7 +98,7 @@ public class BlogServiceImpl implements BlogService {
 			       throw new BlogAlreadyExistedByTitleException("Failed to create blog");
 		     if(blogRequest.getTopics().length<1)
 			        throw new TopicsNotSpecifiedException("failed to create a blog");
-		     Blog uniqueblog = mapToBlog(blogRequest, blog);
+		     Blog uniqueblog = mapToBlog(blogRequest, new Blog());
 		     blogRepository.save(uniqueblog);
 		     return ResponseEntity.ok(
 		    		 responseStructure.setStatusCode(HttpStatus.OK.value())
