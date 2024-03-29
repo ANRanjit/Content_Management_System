@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.cms.dto.BlogResponse;
 import com.example.cms.entity.Blog;
+import com.example.cms.entity.ContributionPanel;
 import com.example.cms.entity.User;
 import com.example.cms.exceptions.BlogAlreadyExistedByTitleException;
 import com.example.cms.exceptions.BlogNotFoundByIdException;
@@ -18,6 +19,7 @@ import com.example.cms.exceptions.TopicsNotSpecifiedException;
 import com.example.cms.exceptions.UserNotFoundException;
 import com.example.cms.dto.BlogRequest;
 import com.example.cms.repository.BlogRepository;
+import com.example.cms.repository.PanelRepository;
 import com.example.cms.repository.UserRepository;
 import com.example.cms.service.BlogService;
 import com.example.cms.utility.ResponseStructure;
@@ -31,7 +33,7 @@ public class BlogServiceImpl implements BlogService {
 	private BlogRepository blogRepository;
 	private UserRepository userRepository;
 	private ResponseStructure<BlogResponse> responseStructure;
-	
+	private PanelRepository panelRepository;
 	@Override
     public ResponseEntity<ResponseStructure<BlogResponse>> createblog(BlogRequest blogRequest, int userId) {
      
@@ -41,23 +43,17 @@ public class BlogServiceImpl implements BlogService {
 				if(blogRequest.getTopics().length<1)
 					throw new TopicsNotSpecifiedException("failed to create a blog");
 				Blog blog = mapToBlog(blogRequest, new Blog());
-				blog.setUsers(Arrays.asList(user));
-				blogRepository.save(blog);
+				ContributionPanel panel=panelRepository.save(new ContributionPanel());
+				blog.setContributionPanel(panel);
+				blog.setUser(user);
+				blog=blogRepository.save(blog);
 				return ResponseEntity.ok(responseStructure
 						.setStatusCode(HttpStatus.OK.value())
 						.setMessage("Blog Created Successfully").setData(mapToBlogResponse(blog)));
 				
 		}).orElseThrow(()-> new UserNotFoundException("failed to creae blog"));
 
-		//		if(!(userRepository.existsById(userId)))
-//			throw new UserNotFoundException("User Not Found");
-//		if((blogRepository.existsByTitle(blogRequest.getTitle())))
-//			throw new BlogAlreadyExistedByTitleException("Title Already Existed");
-//		Blog blog = blogRepository.save(mapToBlog(blogRequest,new Blog(),userId));
-//		return ResponseEntity.ok(responseStructure
-//				.setStatusCode(HttpStatus.OK.value())
-//				.setMessage("Blog Created Successfully").setData(mapToBlogResponse(blog)));
-	}
+		}
 
 	private BlogResponse mapToBlogResponse(Blog blog) {
 		
@@ -65,7 +61,7 @@ public class BlogServiceImpl implements BlogService {
 				.title(blog.getTitle())
 				.about(blog.getAbout())
 				.topics(blog.getTopics())
-				.users(blog.getUsers()).build();
+				.user(blog.getUser()).build();
 	}
 
 	private Blog mapToBlog(BlogRequest blogRequest, Blog blog) {
