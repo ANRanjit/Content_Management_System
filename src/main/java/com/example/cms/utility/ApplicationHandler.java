@@ -5,6 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.example.cms.exceptions.BlogAlreadyExistedByTitleException;
+import com.example.cms.exceptions.BlogNotFoundByIdException;
+import com.example.cms.exceptions.TopicsNotSpecifiedException;
 import com.example.cms.exceptions.UserAlreadyExistByEmailException;
 import com.example.cms.exceptions.UserNotFoundException;
 
@@ -26,6 +29,22 @@ public class ApplicationHandler {
 	{
 		return errorResponse(HttpStatus.BAD_REQUEST,ex.getMessage(),"User Already Exist");
 	}
-	
-	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> blogNotFoundByIdException(BlogNotFoundByIdException bnfe)
+	{
+		return errorResponse(HttpStatus.BAD_REQUEST,bnfe.getMessage(),"Blog Not Found ");
+
+	}
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> blogAlreadyExistException(BlogAlreadyExistedByTitleException baet)
+	{
+		return errorResponse(HttpStatus.BAD_REQUEST,baet.getMessage(),"Blog Title Already Exist");
+
+	}
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> topicsNotSpecifiedException(TopicsNotSpecifiedException tnse)
+	{
+		return errorResponse(HttpStatus.BAD_REQUEST,tnse.getMessage(),"User Already Exist");
+
+	}
 }
