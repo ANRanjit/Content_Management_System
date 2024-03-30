@@ -1,11 +1,9 @@
 package com.example.cms.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,20 +18,17 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-@EntityListeners(value= {AuditingEntityListener.class})
-public class Blog {
+@NoArgsConstructor
+public class ContributionPanel {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int blogId;
-	private String title;
-	private String[] topics;
-	private String about;
-	@ManyToOne
-	private User user;
-	@OneToOne
-	private ContributionPanel contributionPanel;
+	private int panelId;
+	
+	@ManyToMany
+	private List<User> contributers=new ArrayList();
+	
+	
 	
 }

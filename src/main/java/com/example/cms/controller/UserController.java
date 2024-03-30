@@ -48,7 +48,7 @@ public class UserController {
 	}
 	@GetMapping("/test")
 	public String test() {
-		return "Hello f";
+		return "Hello i am cm";
 	}
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<ResponseStructure<UserResponse>> findUser(@PathVariable int userId)
