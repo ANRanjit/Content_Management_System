@@ -1,10 +1,13 @@
 package com.example.cms.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
@@ -13,6 +16,8 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -51,9 +56,13 @@ public class User {
 //	@Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&+=!])(?!.*\\s).{8,}$",
 //	message = "password must contain at least one letter,one number,one special charecter")
 	private String password;
+	
+	@OneToMany(mappedBy = "user") @JsonIgnore
+	private List<Blog> blogs;
 	@CreatedDate
 	@Column(updatable = false)
 	private LocalDateTime createdAt;
 	@LastModifiedDate
 	private LocalDateTime lastModifiedAt;
+	private boolean deleted;
 }

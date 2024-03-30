@@ -5,6 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.example.cms.exceptions.BlogAlreadyExistedByTitleException;
+import com.example.cms.exceptions.BlogNotFoundByIdException;
+import com.example.cms.exceptions.ContributersAlreadyPresentException;
+import com.example.cms.exceptions.ContributersNotPresentException;
+import com.example.cms.exceptions.IllegalAccessRequestException;
+import com.example.cms.exceptions.PanelNotFoundByIdException;
+import com.example.cms.exceptions.TopicsNotSpecifiedException;
 import com.example.cms.exceptions.UserAlreadyExistByEmailException;
 import com.example.cms.exceptions.UserNotFoundException;
 
@@ -18,7 +25,8 @@ public class ApplicationHandler {
 
 	private ResponseEntity<ErrorStructure<String>> errorResponse(HttpStatus status,String message,String errorData)
 	{
-		return new ResponseEntity<ErrorStructure<String>>(errorStructure.setErrorCode(status.value()).setErrorMessage(message)
+		return new ResponseEntity<ErrorStructure<String>>(errorStructure.setErrorCode(status.value())
+				.setErrorMessage(message)
 				.setErrorData(errorData),status);
 	}
 	@ExceptionHandler
@@ -26,6 +34,45 @@ public class ApplicationHandler {
 	{
 		return errorResponse(HttpStatus.BAD_REQUEST,ex.getMessage(),"User Already Exist");
 	}
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> blogNotFoundByIdException(BlogNotFoundByIdException bnfe)
+	{
+		return errorResponse(HttpStatus.BAD_REQUEST,bnfe.getMessage(),"Blog Not Found ");
+	}
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> blogAlreadyExistException(BlogAlreadyExistedByTitleException baet)
+	{
+		return errorResponse(HttpStatus.BAD_REQUEST,baet.getMessage(),"Blog Title Already Exist");
+
+	}
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> topicsNotSpecifiedException(TopicsNotSpecifiedException tnse)
+	{
+		return errorResponse(HttpStatus.BAD_REQUEST,tnse.getMessage(),"User Already Exist");
+
+	}
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> illegalAccessRequestException(IllegalAccessRequestException iare)
+	{
+		return errorResponse(HttpStatus.BAD_REQUEST,iare.getMessage(),"User Already Exist");
+
+	}
 	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> panelNotFoundByIdException(PanelNotFoundByIdException pnfe)
+	{
+		return errorResponse(HttpStatus.BAD_REQUEST,pnfe.getMessage(),"Panel Not Found");
+
+	}
 	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> blogContributersAlreadyPresentationPresent(ContributersAlreadyPresentException ex)
+	{
+		return errorResponse(HttpStatus.BAD_REQUEST,ex.getMessage(),"Contributer Already present ");
+	}
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> blogContributersNotPresentationPresent(ContributersNotPresentException ex)
+	{
+		return errorResponse(HttpStatus.BAD_REQUEST,ex.getMessage(),"Contributer Not present ");
+	}
 }
