@@ -7,9 +7,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.example.cms.exceptions.BlogAlreadyExistedByTitleException;
 import com.example.cms.exceptions.BlogNotFoundByIdException;
+import com.example.cms.exceptions.BlogPostAlreadyInDraftException;
+import com.example.cms.exceptions.BlogPostNotFoundByIdException;
 import com.example.cms.exceptions.ContributersAlreadyPresentException;
 import com.example.cms.exceptions.ContributersNotPresentException;
 import com.example.cms.exceptions.IllegalAccessRequestException;
+import com.example.cms.exceptions.IllegalAccessRequestForUpdateException;
 import com.example.cms.exceptions.PanelNotFoundByIdException;
 import com.example.cms.exceptions.TopicsNotSpecifiedException;
 import com.example.cms.exceptions.UserAlreadyExistByEmailException;
@@ -32,7 +35,7 @@ public class ApplicationHandler {
 	@ExceptionHandler
 	public ResponseEntity<ErrorStructure<String>> userAlreadyExistByEmailException(UserAlreadyExistByEmailException ex)
 	{
-		return errorResponse(HttpStatus.BAD_REQUEST,ex.getMessage(),"User Already Exist");
+		return errorResponse(HttpStatus.BAD_REQUEST,ex.getMessage(),"Illegal access");
 	}
 	@ExceptionHandler
 	public ResponseEntity<ErrorStructure<String>> blogNotFoundByIdException(BlogNotFoundByIdException bnfe)
@@ -54,7 +57,7 @@ public class ApplicationHandler {
 	@ExceptionHandler
 	public ResponseEntity<ErrorStructure<String>> illegalAccessRequestException(IllegalAccessRequestException iare)
 	{
-		return errorResponse(HttpStatus.BAD_REQUEST,iare.getMessage(),"User Already Exist");
+		return errorResponse(HttpStatus.BAD_REQUEST,iare.getMessage(),"Illegal Access");
 
 	}
 	
@@ -74,5 +77,22 @@ public class ApplicationHandler {
 	public ResponseEntity<ErrorStructure<String>> blogContributersNotPresentationPresent(ContributersNotPresentException ex)
 	{
 		return errorResponse(HttpStatus.BAD_REQUEST,ex.getMessage(),"Contributer Not present ");
+	}
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> blogPostNotFoundById(BlogPostNotFoundByIdException ex)
+	{
+		return errorResponse(HttpStatus.BAD_REQUEST,ex.getMessage(),"BlogPost Not Exist In This Id ");
+	}
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> illegalAccessForUpdateRequestException(IllegalAccessRequestForUpdateException iare)
+	{
+		return errorResponse(HttpStatus.BAD_REQUEST,iare.getMessage(),"User doesn't have a permission");
+
+	}
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> illegalAccessForUpdateRequestException(BlogPostAlreadyInDraftException ex)
+	{
+		return errorResponse(HttpStatus.BAD_REQUEST,ex.getMessage(),"BlogPost Already in Draft");
+
 	}
 }

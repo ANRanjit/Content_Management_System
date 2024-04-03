@@ -1,17 +1,12 @@
 package com.example.cms.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,17 +15,17 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class ContributionPanel {
+@AllArgsConstructor
+public class Publish {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int panelId;
-	
-	@ManyToMany @JsonIgnore
-	private List<User> contributers=new ArrayList();
-	
-	
-	
+	private int publishId;
+	@NotNull(message = "Invalid Input")
+	private String seoTitle;
+	private String seoDescription;
+	private String[] seoTopics;
+	@OneToOne(mappedBy = "publish")
+	private BlogPost blogPost;
 }
