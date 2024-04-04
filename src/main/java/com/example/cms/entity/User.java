@@ -57,7 +57,8 @@ public class User {
 //	message = "password must contain at least one letter,one number,one special charecter")
 	private String password;
 	
-	@OneToMany(mappedBy = "user") @JsonIgnore
+	@OneToMany(mappedBy = "user")
+	@JsonIgnore
 	private List<Blog> blogs;
 	@CreatedDate
 	@Column(updatable = false)

@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -36,8 +37,11 @@ public class BlogServiceImpl implements BlogService {
 	private PanelRepository panelRepository;
 	@Override
     public ResponseEntity<ResponseStructure<BlogResponse>> createblog(BlogRequest blogRequest, int userId) {
-     
-		return userRepository.findById(userId).map(user->{
+//		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+//		return userRepository.findByUserEmail(email).map(user->
+//		return userRepository.findById(userId).map(user->{
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		return userRepository.findByUserEmail(email).map(user->{
 				if(blogRepository.existsByTitle(blogRequest.getTitle()))
 					throw new BlogAlreadyExistedByTitleException("Failed to create blog");
 				if(blogRequest.getTopics().length<1)
@@ -51,7 +55,7 @@ public class BlogServiceImpl implements BlogService {
 						.setStatusCode(HttpStatus.OK.value())
 						.setMessage("Blog Created Successfully").setData(mapToBlogResponse(blog)));
 				
-		}).orElseThrow(()-> new UserNotFoundException("failed to creae blog"));
+		}).get();/*orElseThrow(()-> new UserNotFoundException("failed to creae blog"));*/
 
 		}
 
