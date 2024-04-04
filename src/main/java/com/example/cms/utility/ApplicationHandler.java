@@ -8,12 +8,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.example.cms.exceptions.BlogAlreadyExistedByTitleException;
 import com.example.cms.exceptions.BlogNotFoundByIdException;
 import com.example.cms.exceptions.BlogPostAlreadyInDraftException;
+import com.example.cms.exceptions.BlogPostNotFoundByIdAndPostTypeByPublishedException;
 import com.example.cms.exceptions.BlogPostNotFoundByIdException;
 import com.example.cms.exceptions.ContributersAlreadyPresentException;
 import com.example.cms.exceptions.ContributersNotPresentException;
 import com.example.cms.exceptions.IllegalAccessRequestException;
 import com.example.cms.exceptions.IllegalAccessRequestForUpdateException;
 import com.example.cms.exceptions.PanelNotFoundByIdException;
+import com.example.cms.exceptions.ScheduleTimeNotValidException;
 import com.example.cms.exceptions.TopicsNotSpecifiedException;
 import com.example.cms.exceptions.UserAlreadyExistByEmailException;
 import com.example.cms.exceptions.UserNotFoundException;
@@ -95,4 +97,15 @@ public class ApplicationHandler {
 		return errorResponse(HttpStatus.BAD_REQUEST,ex.getMessage(),"BlogPost Already in Draft");
 
 	}
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> blogPostNotFoundByIdAndPostByPublished(BlogPostNotFoundByIdAndPostTypeByPublishedException ex)
+	{
+		return errorResponse(HttpStatus.BAD_REQUEST,ex.getMessage(),"BlogPost Not Exist In This Id or Its not Published ");
+	}
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> schedulETimeNotValid(ScheduleTimeNotValidException ex)
+	{
+		return errorResponse(HttpStatus.BAD_REQUEST,ex.getMessage(),"Scheduled is Not Valid");
+	}
+
 }

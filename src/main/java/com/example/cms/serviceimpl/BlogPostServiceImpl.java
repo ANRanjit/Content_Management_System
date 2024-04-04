@@ -2,6 +2,7 @@ package com.example.cms.serviceimpl;
 
 import java.util.Arrays;
 
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,12 +10,14 @@ import org.springframework.stereotype.Service;
 
 import com.example.cms.dto.BlogPostRequest;
 import com.example.cms.dto.BlogPostResponse;
+import com.example.cms.dto.PublishResponse;
 import com.example.cms.entity.Blog;
 import com.example.cms.entity.BlogPost;
 import com.example.cms.entity.ContributionPanel;
 import com.example.cms.enums.PostType;
 import com.example.cms.exceptions.BlogNotFoundByIdException;
 import com.example.cms.exceptions.BlogPostAlreadyInDraftException;
+import com.example.cms.exceptions.BlogPostNotFoundByIdAndPostTypeByPublishedException;
 import com.example.cms.exceptions.BlogPostNotFoundByIdException;
 import com.example.cms.exceptions.IllegalAccessRequestException;
 import com.example.cms.exceptions.IllegalAccessRequestForUpdateException;
@@ -36,6 +39,24 @@ public class BlogPostServiceImpl implements BlogPostService{
 	ResponseStructure<BlogPostResponse> responseStructure;
 	UserRepository userRepository;
 	PanelRepository panelRepository;
+	PublishServiceImpl publishServiceImpl;
+	
+	private BlogPost mapToBlogPostEntity(BlogPostRequest blogPostRequest, BlogPost blogPost) {
+		blogPost.setTitle(blogPostRequest.getTitle());
+		blogPost.setSubTitle(blogPostRequest.getSubTitle());
+		blogPost.setSummary(blogPostRequest.getSummary());
+		return blogPost;
+	}
+	private BlogPostResponse  mapToBlogPostResponse(BlogPost blogPost)
+	{
+		return BlogPostResponse.builder()
+				.title(blogPost.getTitle())
+				.subTitle(blogPost.getSubTitle())
+				.postType(blogPost.getPostType())
+				.summary(blogPost.getSummary())
+				.publishResponse(publishServiceImpl.mapToPublishResponse(blogPost.getPublish()))
+				.build();
+	}
 
 	@Override
 	public ResponseEntity<ResponseStructure<BlogPostResponse>> createBlogPost(BlogPostRequest blogPostRequest,
@@ -58,28 +79,7 @@ public class BlogPostServiceImpl implements BlogPostService{
      	}).get();
 	}
 
-	private BlogPost mapToBlogPostEntity(BlogPostRequest blogPostRequest, BlogPost blogPost) {
-		blogPost.setTitle(blogPostRequest.getTitle());
-		blogPost.setSubTitle(blogPostRequest.getSubTitle());
-		blogPost.setSummary(blogPostRequest.getSummary());
-		return blogPost;
-	}
-	private BlogPostResponse  mapToBlogPostResponse(BlogPost blogPost)
-	{
-		return BlogPostResponse.builder()
-				.title(blogPost.getTitle())
-				.subTitle(blogPost.getSubTitle())
-				.postType(blogPost.getPostType())
-				.blog(blogPost.getBlog())
-				.createdBy(blogPost.getCreatedBy())
-				.createdBy(blogPost.getCreatedBy())
-				.createdAt(blogPost.getCreatedAt())
-				.lastModeifiedBy(blogPost.getLastModeifiedBy())
-				.lastModifiedAt(blogPost.getLastModifiedAt())
-				.publish(blogPost.getPublish())
-				.build();
-	}
-
+	
 	@Override
 	public ResponseEntity<ResponseStructure<BlogPostResponse>> updateBlogPost(BlogPostRequest blogPostRequest,
 			int blogPostId) {
@@ -135,5 +135,24 @@ public class BlogPostServiceImpl implements BlogPostService{
 						.setData(mapToBlogPostResponse(blogPost)));
 			}).orElseThrow(()->new BlogPostNotFoundByIdException("Can't Unpublish"));
 	}).get();
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<BlogPostResponse>> getBlogPost(int postId) {
+		
+		return blogPostRepository.findById(postId).map(blogPost->{
+			return ResponseEntity.ok(responseStructure.setStatusCode(HttpStatus.OK.value())
+					.setMessage("Post Found")
+					.setData(mapToBlogPostResponse(blogPost)));
+		}).orElseThrow(()->new BlogPostNotFoundByIdException("Not found"));
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<BlogPostResponse>> getBlogPostByPublished(int postId) {
+		return blogPostRepository.findByPostIdAndPostType(postId, PostType.PUBLISHED).map(post->
+		ResponseEntity.ok(responseStructure.setStatusCode(HttpStatus.OK.value())
+				.setMessage("Post Found")
+				.setData(mapToBlogPostResponse(post)))
+		).orElseThrow(()->new BlogPostNotFoundByIdAndPostTypeByPublishedException("Not found"));
 	}
 }

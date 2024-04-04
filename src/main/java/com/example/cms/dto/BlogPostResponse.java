@@ -31,10 +31,5 @@ public class BlogPostResponse {
 	private String subTitle;
 	private String summary;
 	private PostType postType;
-	private String createdBy;
-	private LocalDateTime createdAt;
-	private LocalDateTime lastModifiedAt;
-	private String lastModeifiedBy;
-	private Blog blog;
-	private Publish publish;
+	private PublishResponse publishResponse;
 }

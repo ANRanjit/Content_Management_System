@@ -3,6 +3,7 @@ package com.example.cms.dto;
 import org.springframework.context.annotation.Configuration;
 
 import com.example.cms.entity.BlogPost;
+import com.example.cms.entity.Schedule;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,5 +22,5 @@ public class PublishResponse {
 	private String seoTitle;
 	private String seoDescription;
 	private String[] seoTopics;
-	private BlogPost blogPost;
+	private Schedule schedule;
 }
