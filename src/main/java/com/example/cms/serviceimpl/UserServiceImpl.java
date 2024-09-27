@@ -12,6 +12,7 @@ import com.example.cms.dto.UserRequest;
 import com.example.cms.dto.UserResponse;
 import com.example.cms.entity.User;
 import com.example.cms.exceptions.UserAlreadyExistByEmailException;
+import com.example.cms.exceptions.UserNotFoundException;
 import com.example.cms.repository.UserRepository;
 import com.example.cms.service.UserService;
 import com.example.cms.utility.ResponseStructure;
@@ -40,13 +41,6 @@ public class UserServiceImpl implements UserService{
 	
 	private UserResponse mapToUserResponse(User user) {
 		return UserResponse.builder().userId(user.getUserId()).userEmail(user.getUserEmail()).userName(user.getUserName()).createdAt(user.getCreatedAt()).latsModifiedAt(user.getLastModifiedAt()).build();
-//		UserResponse userResponse=new UserResponse();
-//		userResponse.setUserId(user.getUserId());
-//		userResponse.setUserEmail(user.getUserEmail());
-//		userResponse.setUserName(user.getUserName());
-//		userResponse.setCreatedAt(user.getCreatedAt());
-//		userResponse.setLatsModifiedAt(user.getLastModifiedAt());
-//		return userResponse;
 	}
 
 	public User mapToUser(UserRequest userRequest,User user) {
@@ -54,6 +48,26 @@ public class UserServiceImpl implements UserService{
 		user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
 		user.setUserEmail(userRequest.getUserEmail());
 		return user;
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<UserResponse>> findUser(int userId) {
+		return userRepository.findById(userId).map(user->ResponseEntity.ok(
+				responseStructure.setStatusCode(HttpStatus.OK.value())
+				.setMessage("User Found").setData(mapToUserResponse(user))))
+				.orElseThrow(()-> new UserNotFoundException("user not found"));
+	}
+	public ResponseEntity<ResponseStructure<UserResponse>> deleteByUserId(int userId) {
+		return userRepository.findById(userId).map(user ->{
+			user.setDeleted(true);
+			User uniqueuser = userRepository.save(user);
+			return ResponseEntity.ok(
+				responseStructure.setStatusCode(HttpStatus.OK.value())
+				.setMessage("User Found and will be deleted in 30 days")
+				.setData(mapToUserResponse(uniqueuser)));
+		})
+				.orElseThrow(()-> new UserNotFoundException("User does not exist"));
+		
 	}
 	
 }
